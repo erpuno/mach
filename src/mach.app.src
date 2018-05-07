@@ -1,0 +1,6 @@
+{application, mach, [{description, "MACH VXZ Walking Machine"},
+                     {vsn, "1.0"},
+                     {registered, []},
+                     {applications, [kernel,stdlib,xmerl,asn1,public_key,ssl,inets]},
+                     {mod, { mach, []}},
+                     {env, []} ]}.
