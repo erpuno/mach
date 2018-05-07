@@ -105,7 +105,9 @@ mock_request(P,M,false,[Method,Address,Headers,Type,Data]) ->
     httpc:request(Method,{Address, Headers, Type, Data},http_options(P,exported(P,http_options,0)),
                                                              options(P,exported(P,options,0))).
 
-mock_replace(Chain,Mocks) -> {element(1,Chain),[ setelement(6,setelement(1,C,M),1) || {C,M} <- lists:zip(element(2,Chain),Mocks) ]}.
+mock_replace(Chain,Mocks) ->
+     { element(1,Chain), [setelement(6,setelement(1,C,M),1)
+                      || {C,M} <- lists:zip(element(2,Chain),Mocks) ]}.
 
 type_content(xml)     -> "text/xml;charset='utf-8';";
 type_content(xform)   -> "application/x-www-form-urlencoded";
