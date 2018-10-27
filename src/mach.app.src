@@ -1,4 +1,4 @@
-{application, mach, [{description, "MACH VXZ Walking Machine"},
+{application, mach, [{description, "MACH REST Machine"},
                      {vsn, "1.0"},
                      {registered, []},
                      {applications, [kernel,stdlib,xmerl,asn1,public_key,ssl,inets]},
