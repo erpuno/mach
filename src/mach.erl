@@ -3,7 +3,7 @@
 -behaviour(application).
 -export([init/1, start/2, stop/1]).
 -author('Maxim Sokhatsky').
--include_lib("n2o/include/wf.hrl").
+-include_lib("n2o/include/n2o.hrl").
 -include_lib("xmerl/include/xmerl.hrl").
 -compile(export_all).
 
