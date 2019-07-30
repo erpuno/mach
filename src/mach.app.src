@@ -1,5 +1,5 @@
-{application, mach, [{description, "MACH REST Machine"},
-                     {vsn, "1.0"},
+{application, mach, [{description, "MACH REST Walker"},
+                     {vsn, "4.7.0"},
                      {registered, []},
                      {applications, [kernel,stdlib,xmerl,asn1,public_key,ssl,inets]},
                      {mod, { mach, []}},

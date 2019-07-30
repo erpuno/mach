@@ -3,11 +3,19 @@
 -behaviour(application).
 -export([init/1, start/2, stop/1]).
 -author('Maxim Sokhatsky').
--include_lib("n2o/include/n2o.hrl").
 -include_lib("xmerl/include/xmerl.hrl").
 -compile(export_all).
 
 money(Double) -> wf:f("~.2f",[Double]).
+
+dateToInt({Y,M,D}) -> Y * 10000 + M * 100 + D.
+dateToInt(Y, M, D) -> Y * 10000 + M * 100 + D.
+
+timeToInt({H,M,S}) -> timeToInt(H, M, S).
+timeToInt(H, M, S) -> Hour = if  H < 10 -> [$0 | wf:to_list(H)]; true -> wf:to_list(H) end,
+                      Min = if  M < 10 -> [$0 | wf:to_list(M)]; true -> wf:to_list(M) end,
+                      Sec = if  S < 10 -> [$0 | wf:to_list(S)]; true -> wf:to_list(S) end,
+                      Hour++Min++Sec.
 
 log_function()   -> application:get_env(mach, errors, {?MODULE,log}).
 mock_services()  -> application:get_env(mach, mock, modules()).
@@ -160,12 +168,10 @@ endpoints() -> [ {Retry,Address,Type,Method} ||
 
 all() -> lists:flatten([ {Service,Service:pipe()} || Service <- modules() ]).
 
-start()    -> spawn(fun() -> [ supervisor:start_child(mach,Spec) || Spec <- supervision() ] end).
+start()    -> [].
 start(_,_) -> supervisor:start_link({local,mach},mach,[]).
 stop(_)    -> ok.
-init([])   -> application:stop(services_bank), mach:ops(), {ok, {{one_for_one, 5, 10}, supervision() }}.
-
-supervision() -> [].
+init([])   -> application:stop(services_bank), mach:ops(), {ok, {{one_for_one, 5, 10}, [] }}.
 
 till(Now,TTL) ->
     calendar:gregorian_seconds_to_datetime(
