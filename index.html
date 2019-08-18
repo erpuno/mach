@@ -55,11 +55,11 @@
    втягивают какой-то объект в обертку какого-то типа. Например у
    нас Data а мы над Data конструируем такой тип:</p>
 
-<figure><pre>Pipe = {ok,Data,Acc}
+<figure><code>Pipe = {ok,Data,Acc}
      | {warning,Data,Acc}
      | {error,Data,Acc}
      | {refusal,Data,Acc}
-     | {repeat,Acc}</pre></figure>
+     | {repeat,Acc}</code></figure>
 
 <p>Вот этот тип и есть тот тип-протокол, благодаря которому наши функции Упаковки
    и Распаковки будут звучать. Т.е. имея этот тип мы делаем наши функции упаковки
@@ -67,7 +67,7 @@
    Для начала опишем интерфейс функций форматтирования:
 </p>
 
-<figure><pre>
+<figure><code>
 req1([Id],Acc) ->
     Req = jsone:encode({[{id,Id}]}),
     {ok, Req, [{sid,Id}|Acc]}.
@@ -79,7 +79,7 @@ ans1(AnswerJSON,Acc) ->
                    phone    = proplists:get_value(&lt;&lt;"phone">>,Data),
                    surnames = proplists:get_value(&lt;&lt;"surnames">>,Data),
                    names    = proplists:get_value(&lt;&lt;"names">>,Data)}, Acc}.
-</pre></figure>
+</code></figure>
 
 <p>Тут вы не смотрите, что JSON не автоиматически преобразует типы по пайплайну
    а нужно вручную в поля заглядывать, это сделано для того чтобы программисты
@@ -91,17 +91,17 @@ ans1(AnswerJSON,Acc) ->
    которые вместе с функциями упаковки и распаковки образуем монаду.
    Сама программа обхода выглядит следующим образом:</p>
 
-<figure><pre>
+<figure><code>
 withdraw() -> {{?MODULE,mach:host(?MODULE)},
               [{json,post,withdraw,{req7,ans7}, 2, "/withdraw"},
                {json,get, withdraw,{req8,ans8}, 3, "/withdrawCheck"},
                {xml,post, withdraw,{req9,ans9}, 3, "/notify"}]}.
-</pre></figure>
+</code></figure>
 
 <p>Тут это просто развернутая запись на Erlang композиции функций
    форматтирования и вызовов внешних сервисов:</p>
 
-<figure><pre>req7 . call . ans7 . call . req8 . call . ans8 . req9 . call . ans9</pre></figure>
+<figure><code>req7 . call . ans7 . call . req8 . call . ans8 . req9 . call . ans9</code></figure>
 
 <p>Котрая происходит при вызове сервиса. Первым параметром мы ложим
    программу обходов сервиса, т.е. композицию функции. Вторым параметром
@@ -109,7 +109,7 @@ withdraw() -> {{?MODULE,mach:host(?MODULE)},
    дальше таймаут дефалный и начальное положение акумулятора. Покажем как
    это работает на примере:</p>
 
-<figure><pre>
+<figure><code>
  > mach:services(withdraw(),[#customer{}], 1000, []).
 
     {ok,20,
@@ -123,7 +123,7 @@ withdraw() -> {{?MODULE,mach:host(?MODULE)},
       {id,&lt;&lt;"00000001">>},
       {sid,1},
       {channel,site}]}
-</pre></figure>
+</code></figure>
 
 <p>Не забываем про декларативное описание все-го что нам нужно для доступа к сервису,
    половина уже описана в самих шагах как то METHOD, MIME, количество Retries и точка
@@ -131,7 +131,7 @@ withdraw() -> {{?MODULE,mach:host(?MODULE)},
    сервиса header/1 в которых вы можете свободно обращаться к акумулятору за полями
    которые вы можете положить в акумулятор на любом шаге выполнения этой композиции.</p>
 
-<figure><pre>
+<figure><code>
 headers(Acc) -> [{proplists:get_value(method,Acc), "HTTP/1.1"},
                  {"content-type",   mach:type(proplists:get_value(type,Acc))},
                  {"accept",         mach:type(proplists:get_value(type,Acc))},
@@ -140,35 +140,35 @@ headers(Acc) -> [{proplists:get_value(method,Acc), "HTTP/1.1"},
                  {"sid",          proplists:get_value(sid,Acc)}].
 
 host(_)    -> "http://bank.com:8888/";
-</pre></figure>
+</code></figure>
 
 <p>Вообщем в модуле больше ничего не нужно, кроме имплементации обязательной
    функции test/0 и вместе с ней моками которые имитируют ответы от каждого
    вебсервиса, естественно моки должны быть в тех же модулях что и функции
    упаковки и распаковки.</p>
 
-<figure><pre>
+<figure><code>
 test() ->
   lists:flatten([[ begin erlang:put(mock,Mock),
-      mach:service(?MODULE:Fun(),Args,1000,Acc) end || Mock </pre></figure>
+      mach:service(?MODULE:Fun(),Args,1000,Acc) end || Mock </code></figure>
 
 <p>тут мы цифрами указываем моки которые тестируют разные входы пайпов.
    Каждая система шагов это как граф по сути, у которого может быть много
    точек входа, тут мы в фукнции тест программируем какие моки для каких
    точек входы выбирать. А вот и сами моки:</p>
 
-<figure><pre>mock(9,[Method,Address,Headers,Type,Data]) ->
+<figure><code>mock(9,[Method,Address,Headers,Type,Data]) ->
     Request = [{i, [{'ibank',   [#xmlText{value="10"}] },
                     {'account', [#xmlText{value="20"}]},
                     {'names',   [#xmlText{value="mach"}]},
                     {'phone',   [#xmlText{value="r"}]}]} ],
-    {ok,{{[],200,"OK"},[], mach:xml(Request) }}.</pre></figure>
+    {ok,{{[],200,"OK"},[], mach:xml(Request) }}.</code></figure>
 
 <p>В сигнатура функции mock/2 второй параметр это список всего
    что нужно передать в httpc клиент. А вот собственно три функции
    Упаковки, Вызова и рапаковки:</p>
 
-<figure><pre>
+<figure><code>
 pack(_,{{P,RA},[{Type,Method,M,{F,G},Retry,Addr}|T]}=Stack,A,Time,Acc) ->
        try case M:F(A,Acc) of
                {ok,Ret,NewAcc} -> call(Retry,Stack,Ret,Time,[{F,A}|NewAcc]);
@@ -203,29 +203,29 @@ unpack(Retry,{{P,RA},[{_,_,M,{F,G},_,_}|T]}=Stack,A,Time,Acc) ->
                        call(Retry-1,Stack,element(2,hd(Acc)),
                             Time,tl(Acc)) end
     catch E:R -> fatal(E,R) end.
-</pre></figure>
+</code></figure>
 
 <p>Где мокабельный http_request выгляит так:</p>
 
-<figure><pre>
+<figure><code>
 http_request(P,M,true,Args) -> M:mock(mock(get(mock)),Args);
 http_request(P,M,false,[Method,Address,Headers,Type,Data]) ->
      httpc:request(Method,{Address, Headers, Type, Data},[],[]).
-</pre></figure>
+</code></figure>
 
 <p>Получилось жутко удобно. Публикую здесь краткое описание для всех,
    кто собирается использовать этот продукт. Что касается моков, то
    их количество зависит от количества case в методах распаковки.
    Проверить что все моки работают можно скопом:</p>
 
-<figure><pre>
+<figure><code>
 > mach:test().
    [{passed,26},{failed,0}].
-</pre></figure>
+</code></figure>
 
 <p>Вот так может выглядеть например модуль сервиса:</p>
 
-<figure><pre>
+<figure><code>
   -module(service_edit).
   -compile(export_all).
 
@@ -236,7 +236,7 @@ http_request(P,M,false,[Method,Address,Headers,Type,Data]) ->
          {ok,{{[],200,"OK"},[],jsone:encode({[{&lt;&lt;"Response">>,
                                             {[{'bank','mach'}]} }]}) }}.
 
-</pre></figure>
+</code></figure>
 
 <p>Что дал переход на такую систему сервисов? Я смогу за 2 дня переписать
    15 сервисов убрав все лишнее, что не касается форматтироврания, в результате
