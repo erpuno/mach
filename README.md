@@ -1,5 +1,6 @@
 MACH: Service Machine Walker
 ============================
+[![Hex pm](http://img.shields.io/hexpm/v/mach.svg?style=flat)](https://hex.pm/packages/mach)
 
 Features
 --------
