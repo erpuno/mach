@@ -1,5 +1,6 @@
 MACH: Service Machine Walker
 ============================
+[![Hex pm](http://img.shields.io/hexpm/v/mach.svg?style=flat)](https://hex.pm/packages/mach)
 
 [![Actions Status](https://github.com/synrc/mach/workflows/mix/badge.svg)](https://github.com/synrc/mach/actions)
 [![Build Status](https://travis-ci.org/synrc/mach.svg?branch=master)](https://travis-ci.org/synrc/mach)
